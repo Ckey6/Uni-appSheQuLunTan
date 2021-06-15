@@ -1,5 +1,5 @@
 <template>
-	<view class="content">
+	<view>
 		
 	</view>
 </template>
@@ -8,18 +8,15 @@
 	export default {
 		data() {
 			return {
-				title: 'Hello'
+				
 			}
 		},
-		onLoad() {
-
-		},
 		methods: {
-
+			
 		}
 	}
 </script>
 
 <style>
-	
+
 </style>
