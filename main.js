@@ -5,6 +5,10 @@ import uView from 'uview-ui'
 //将uview-ui挂载到Vue实例上，方便全局调用
 Vue.use(uView)
 
+//引入公用的头部导航组件（插件市场下载）
+import uniNavBar from '@/components/uni-nav-bar/index.vue'
+Vue.component('uniNavBar',uniNavBar)
+
 Vue.prototype.BaseFileURL = 'http://47.115.83.135/api/v2/files/'
 
 
