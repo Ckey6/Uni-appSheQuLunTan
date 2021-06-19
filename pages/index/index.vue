@@ -14,7 +14,7 @@
 			<!-- 顶部广告位轮播 -->
 			<swiper class="swiper" :indicator-dots="false" :autoplay="true" :interval="2500" :duration="500">
 				<swiper-item v-for="item in swiperAdList" :key="item.id">
-					<navigator open-type="navigate" :url=" '/pages/webview/webview?url='+item.link">
+					<navigator open-type="navigate" :url=" '/pages/webview/webview?url='+ encodeURI(item.link)">
 						<image class="banner-swiper-img" :src="item.image" mode="aspectFill" />
 					</navigator>
 				</swiper-item>
@@ -23,20 +23,18 @@
 			<image class="crile" src="@/static/crile.png" mode="aspectFill" />
 			<!-- 两个选项按钮 -->
 			<view class="card-header">
-				<view class="card-one card-left">
+				<view class="card-one card-left" @tap="gotoSwitch('/pages/feeds/feeds')">
 					<image class="img" src="@/static/coffee.png" mode="aspectFill" />
 					<view class="iright">
-						<view class="title">新鲜事</view>
+						<view class="title">精彩动态</view>
 						<view class="iview">88个分享</view>
 					</view>
 				</view>
-				<view class="card-one card-right">
+				<view class="card-one card-right" @tap="gotoSwitch('/pages/store/store')">
 					<image class="img" src="@/static/ran.png" mode="aspectFill" />
 					<view class="iright">
-						<view class="title">活动墙</view>
-						<view class="iview">
-							100人参与
-						</view>
+						<view class="title">商城</view>
+						<view class="iview">100人参与</view>
 					</view>
 				</view>
 			</view>
@@ -56,7 +54,7 @@
 						<u-waterfall-sns v-model="feedsList" ref="uWaterfall">
 							<template v-slot:left="{leftList}">
 								<view class="feed-one" v-for="(item, index) in leftList" :key="index">
-									<a>
+									<navigator :url=" '/subpages/feedinfo/feedinfo?id=' + item.id ">
 										<image class="feed-img" :src="item.cover" mode="widthFix" :lazy-load="true" />
 										<view class="u-line-2 feed-title" v-if="!!item.feed_content">{{ item.feed_content }}</view>
 										<view class="feed-info">
@@ -72,12 +70,12 @@
 												</view>
 											</view>
 										</view>
-									</a>
+									</navigator>
 								</view>
 							</template>
 							<template v-slot:right="{rightList}">
 								<view class="feed-one" v-for="(item, index) in rightList" :key="index">
-									<a>
+									<navigator :url=" '/subpages/feedinfo/feedinfo?id=' + item.id ">
 										<image class="feed-img" :src="item.cover" mode="widthFix" :lazy-load="true" />
 										<view class="u-line-2 feed-title" v-if="!!item.feed_content">{{ item.feed_content }}</view>
 										<view class="feed-info">
@@ -93,7 +91,7 @@
 												</view>
 											</view>
 										</view>
-									</a>
+									</navigator>
 								</view>
 							</template>
 						</u-waterfall-sns>
@@ -103,7 +101,7 @@
 			<!-- 资讯列表实现 -->
 			<swiper-item class="swiper-item sns-news">
 				<view v-for="(item, index) in newsList" :key="index">
-					<a class="one-new">
+					<navigator class="one-new" :url=" '/subpages/newinfo/newinfo?id=' + item.id ">
 						<view class="left">
 							<view class="title u-line-2">{{item.title}}</view>
 							<view class="uinfo">
@@ -118,7 +116,7 @@
 						<view class="right">
 							<image class="pic" mode="aspectFill" :src="item.cover" />
 						</view>
-					</a>
+					</navigator>
 				</view>
 			</swiper-item>
 		</swiper>
@@ -145,13 +143,16 @@
 				//滑动页面轮播器的高度
 				swiperSliderHeight:'500px',
 				swiperSliderFeedsHeight:0,
-				swiperSliderNewsHeight:0
+				swiperSliderNewsHeight:0,
+				//记录滚动所在的位置
+				oldFeedsScrollTop:0,
+				oldNewsScrollTop:0
 			}
 		},
 		async onLoad() {
 			//在这里注册一个uniApp的顶层事件，用来作为数据通信
 			uni.$on("swiperHeightChange",height =>{
-				this.swiperSliderFeedsHeight = parseInt(height) + 500 +'px';
+				this.swiperSliderFeedsHeight = parseInt(height) + 100 +'px';
 				this.swiperSliderHeight = this.swiperSliderFeedsHeight
 			})
 			
@@ -175,6 +176,11 @@
 		
 		onPageScroll(event){
 			// console.log(event.scrollTop);
+			if(this.currentSwiperIndex === 0){
+				this.oldFeedsScrollTop = event.scrollTop
+			}else{
+				this.oldNewsScrollTop = event.scrollTop
+			}
 			if(event.scrollTop > 227){
 				this.navBarShowTag = true
 			}else{
@@ -207,6 +213,12 @@
 		},
 		
 		methods: {
+			//跳转tab页面
+			gotoSwitch(url){
+				uni.switchTab({
+					url
+				})
+			},
 			//请求feeds数据列表
 			async getFeedsList(){
 				let feeds = await this.$u.api.getFeeds()
@@ -226,14 +238,13 @@
 				let news = await this.$u.api.getNews()
 				let newsList = news.data.map(item =>{
 					return{
-						title: item.title,
-						author: item.author,
-						created_at: item.created_at,
+						...item,
 						cover: this.BaseFileURL + item.image.id
 					}
 				})
 				this.newsList = [...this.newsList,...newsList]
 				this.swiperSliderNewsHeight = (this.newsList.length * 90 + 100) +'px'
+				this.swiperSliderHeight = this.swiperSliderNewsHeight
 			},
 			
 			//资讯和推荐页面左右滑动时的效果
@@ -241,13 +252,18 @@
 				// console.log(event.detail.current);
 				if(event.detail.current === 0){
 					this.swiperSliderHeight = this.swiperSliderFeedsHeight
+					uni.pageScrollTo({
+						duration:0,
+						scrollTop:this.oldFeedsScrollTop,
+					})
 				}else{
 					this.swiperSliderHeight = this.swiperSliderNewsHeight
+					uni.pageScrollTo({
+						duration:0,
+						scrollTop:this.oldNewsScrollTop,
+					})
 				}
-				uni.pageScrollTo({
-					duration:0,
-					scrollTop:300,
-				})
+				
 				this.currentSwiperIndex = event.detail.current
 				// console.log(event)
 			},
@@ -255,13 +271,17 @@
 			swiperChange(index){
 				if(index === 0){
 					this.swiperSliderHeight = this.swiperSliderFeedsHeight
+					uni.pageScrollTo({
+						duration:0,//过渡时间必须为零，uni-app bug，否则运行到手机会报错
+						scrollTop:this.oldFeedsScrollTop,//滚动到目标位置
+					})
 				}else{
 					this.swiperSliderHeight = this.swiperSliderNewsHeight
+					uni.pageScrollTo({
+						duration:0,//过渡时间必须为零，uni-app bug，否则运行到手机会报错
+						scrollTop:this.oldNewsScrollTop,//滚动到目标位置
+					})
 				}
-				uni.pageScrollTo({
-					duration:0,//过渡时间必须为零，uni-app bug，否则运行到手机会报错
-					scrollTop:300,//滚动到目标位置
-				})
 				this.currentSwiperIndex = index
 				// console.log(index)
 			}
@@ -328,7 +348,7 @@
 			left: 0;
 			top: 320upx;
 			height: 160upx;
-			z-index: 99;
+			z-index: 10;
 			width: 710upx;
 			margin-left: 20upx;
 			display: flex;

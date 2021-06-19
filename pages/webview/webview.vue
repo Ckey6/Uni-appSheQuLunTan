@@ -10,7 +10,7 @@
 			}
 		},
 		onLoad(option){
-			this.url = option.url;
+			this.url = decodeURI(option.url);
 		}
 	}
 </script>
