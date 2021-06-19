@@ -44,6 +44,28 @@
             
         }
     ],
+	"subPackages":[{
+		"root":"subpages",
+		"pages":[
+			{
+			    "path" : "feedinfo/feedinfo",
+			    "style" :                                                                                    
+			    {
+			        "navigationBarTitleText": "动态详情",
+			        "enablePullDownRefresh": false
+			    }
+			}
+		    ,{
+                    "path" : "newinfo/newinfo",
+                    "style" :                                                                                    
+                {
+                    "navigationStyle": "custom",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+            ]
+	}],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

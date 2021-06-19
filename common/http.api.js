@@ -37,6 +37,16 @@ const install = (Vue, vm) => {
 		// recommend: 1
 	})=> vm.$u.get('/news', params)
 	
+	//获取动态详情
+	api.getFeedInfo = (params = {
+		id:17
+	})=>vm.$u.get('/feeds/' + params.id)
+	
+	//获取资讯详情
+	api.getNewInfo = (params = {
+		id:17
+	})=>vm.$u.get('/news/' + params.id)
+	
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
 	vm.$u.api = api
 }
