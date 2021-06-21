@@ -31,9 +31,9 @@ const install = (Vue, vm) => {
 		
 		// 方式四，如果token放在了Storage本地存储中，拦截是每次请求都执行的
 		// 所以哪怕您重新登录修改了Storage，下一次的请求将会是最新值
-		// const token = uni.getStorageSync('token');
-		// config.header.token = token;
-		// config.header.Token = 'xxxxxx';
+		const token = uni.getStorageSync('token');
+		config.header.Authorization = 'Bearer ' + token;
+		config.header.Accept = "application/json";
 		
 		// 可以对某个url进行特别处理，此url参数为this.$u.get(url)中的url值
 		// if(config.url == '/user/login') config.header.noToken = true;

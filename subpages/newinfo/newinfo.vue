@@ -40,6 +40,7 @@
 		</view>
 
 		<view class="line" />
+		<comment :oneInfo='newInfo' type="news"/>
 	</view>
 </template>
 
@@ -50,11 +51,14 @@
 	import htmlParse from "@/components/html-parse/parse.vue";
 	// 引入毛玻璃组件
 	import picBlur from "@/components/pic-blur/pic-blur.vue";
+	//导入评论组件
+	import comment from '@/components/comment/comment/comment.vue'
 	
 	export default {
 		components: {
 			htmlParse,
-			picBlur
+			picBlur,
+			comment
 		},
 		data() {
 			return {

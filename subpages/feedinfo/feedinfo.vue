@@ -15,12 +15,16 @@
 			</view>
 		</view>
 		<view class="line" />
+		<!-- 调用评论组件 -->
+		<comment :oneInfo='feedInfo' type="feed"/>
 	</view>
 </template>
 
 <script>
 	//引入时间格式化工具
 	import timeFrom from '@/tools/timeFrom.js'
+	//导入评论组件
+	import comment from '@/components/comment/comment/comment.vue'
 	export default {
 		data() {
 			return {
@@ -28,6 +32,9 @@
 				getRequestOk:false,
 				feedInfo:{}
 			}
+		},
+		components:{
+			comment
 		},
 		async onLoad(options){
 			//分享到朋友圈、群组
