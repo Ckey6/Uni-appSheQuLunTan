@@ -9,15 +9,24 @@ Vue.use(uView)
 import uniNavBar from '@/components/uni-nav-bar/index.vue'
 Vue.component('uniNavBar',uniNavBar)
 
+//导入登录组件
+import login from "@/components/login/login.vue"
+Vue.component('login',login)
+
+
 Vue.prototype.BaseFileURL = 'http://47.115.83.135/api/v2/files/'
 
+//引入Vuex store
+import store from '@/store/index.js'
+Vue.prototype.$store = store
 
 Vue.config.productionTip = false
 
 App.mpType = 'app'
 
 const app = new Vue({
-    ...App
+    ...App,
+	store
 })
 
 // http拦截器，此为需要加入的内容，如果不是写在common目录，请自行修改引入路径

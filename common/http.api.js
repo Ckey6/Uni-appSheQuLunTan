@@ -42,10 +42,34 @@ const install = (Vue, vm) => {
 		id:17
 	})=>vm.$u.get('/feeds/' + params.id)
 	
+	//获取动态评论
+	api.getFeedComment = (params = {
+		id:17
+	})=>vm.$u.get('/feeds/' + params.id)
+	
 	//获取资讯详情
 	api.getNewInfo = (params = {
 		id:17
 	})=>vm.$u.get('/news/' + params.id)
+	
+	
+	//获取资讯评论
+	api.getNewComments = params =>vm.$u.get('/news/' + params.id + '/comments')
+	//获取动态评论
+	api.getFeedComments = params =>vm.$u.get('/feeds/' + params.id + '/comments')
+	
+	
+	//用户相关API
+	//查看用户信息
+	api.findUser = params => vm.$u.get('/users/' + params.name)
+	//注册
+	api.userRegister = params => vm.$u.post('/users' , params)
+	//登录
+	api.userLogin = params => vm.$u.post('/auth/login' , params)
+	//退出
+	api.userLogout = () => vm.$u.post('/auth/logout')
+	//获取当前登录用户相关通知消息
+	api.getUserMsg = () => vm.$u.get('/user/counts')
 	
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
 	vm.$u.api = api
