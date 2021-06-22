@@ -48,10 +48,60 @@
 		<!-- 内容轮播导航实现 -->
 		<swiper  class="swiper-box" :style="'height:' + swiperSliderHeight" :current="currentSwiperIndex" @animationfinish="swiperSlider">
 			<!-- 推荐动态实现 -->
+			<!-- <swiper-item class="swiper-item">
+							<view class="page-item sns-now">
+								<view class="feeds-box">
+									<u-waterfall-sns v-model="feedsList" ref="waterfall">
+										<template v-slot:left="{leftList}">
+											<view class="feed-one" v-for="(item, index) in leftList" :key="index">
+												<navigator open-type="navigate" :url=" '/subpages/feedinfo/feedinfo?id=' + item.id">
+													<image class="feed-img" :src="item.cover" mode="widthFix" :lazy-load="true" />
+													<view class="u-line-2 feed-title" v-if="!!item.feed_content">{{ item.feed_content }}</view>
+													<view class="feed-info">
+														<view class="iview">
+															<image class="avatar" :src=" item.avatar" />
+															<text class="name u-line-1">{{ item.name }}</text>
+														</view>
+														<view class="iview">
+															<view class="ilike" @tap.stop="clickLove(item)">
+																<image v-if="item.has_like" src="@/static/lover.png" class="micon" />
+																<image v-else src="@/static/love.png" class="micon" />
+																<text class="love-count" v-if="item.like_count>0">{{ item.like_count }}</text>
+															</view>
+														</view>
+													</view>
+												</navigator>
+											</view>
+										</template>
+										<template v-slot:right="{rightList}">
+											<view class="feed-one" v-for="(item, index) in rightList" :key="index">
+												<navigator open-type="navigate" :url=" '/subpages/feedinfo/feedinfo?id=' + item.id">
+													<image class="feed-img" :src="item.cover" mode="widthFix" :lazy-load="true" />
+													<view class="u-line-2 feed-title" v-if="!!item.feed_content">{{ item.feed_content }}</view>
+													<view class="feed-info">
+														<view class="iview">
+															<image class="avatar" :src=" item.avatar" />
+															<text class="name u-line-1">{{ item.name }}</text>
+														</view>
+														<view class="iview">
+															<view class="ilike" @tap.stop="clickLove(item)">
+																<image v-if="item.has_like" src="@/static/lover.png" class="micon" />
+																<image v-else src="@/static/love.png" class="micon" />
+																<text class="love-count" v-if="item.like_count>0">{{ item.like_count }}</text>
+															</view>
+														</view>
+													</view>
+												</navigator>
+											</view>
+										</template>
+									</u-waterfall-sns>
+								</view>
+							</view>
+						</swiper-item> -->
 			<swiper-item class="swiper-item">
 				<view class="page-item sns-now">
 					<view class="feeds-box">
-						<u-waterfall-sns v-model="feedsList" ref="uWaterfall">
+						<u-waterfall-sns v-model="feedsList" ref="waterfall">
 							<template v-slot:left="{leftList}">
 								<view class="feed-one" v-for="(item, index) in leftList" :key="index">
 									<navigator :url=" '/subpages/feedinfo/feedinfo?id=' + item.id ">
@@ -63,8 +113,8 @@
 												<text class="name u-line-1">{{ item.name }}</text>
 											</view>
 											<view class="iview">
-												<view class="ilike">
-													<image v-if="item.has_liked" src="@/static/lover.png" class="micon" />
+												<view class="ilike" @tap.stop="clickLove(item)">
+													<image v-if="item.has_like" src="@/static/lover.png" class="micon" />
 													<image v-else src="@/static/love.png" class="micon" />
 													<text class="love-count" v-if="item.like_count>0">{{ item.like_count }}</text>
 												</view>
@@ -84,8 +134,8 @@
 												<text class="name u-line-1">{{ item.name }}</text>
 											</view>
 											<view class="iview">
-												<view class="ilike">
-													<image v-if="item.has_liked" src="@/static/lover.png" class="micon" />
+												<view class="ilike" @tap.stop="clickLove(item)">
+													<image v-if="item.has_like" src="@/static/lover.png" class="micon" />
 													<image v-else src="@/static/love.png" class="micon" />
 													<text class="love-count" v-if="item.like_count>0">{{ item.like_count }}</text>
 												</view>
@@ -126,7 +176,13 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapActions
+	} from 'vuex'
+	import feedMixin from '@/mixins/todoFeed.js'	
 	export default {
+		mixins: [feedMixin],
 		data() {
 			return {
 				//navbar显示状态初始值
@@ -149,11 +205,38 @@
 				oldNewsScrollTop:0
 			}
 		},
+		computed: {
+			...mapState(['loginState', 'userInfo'])
+		},
 		async onLoad() {
 			//在这里注册一个uniApp的顶层事件，用来作为数据通信
 			uni.$on("swiperHeightChange",height =>{
 				this.swiperSliderFeedsHeight = parseInt(height) + 100 +'px';
 				this.swiperSliderHeight = this.swiperSliderFeedsHeight
+			})
+			
+			uni.$on('indexUserLogin', ()=>{
+				this.currentSwiperIndex = 0
+				this.feedsList = []
+				this.$refs.waterfall.clear()
+				this.getFeedsList()
+			})
+			uni.$on('indexUserLogout', ()=>{
+				this.currentSwiperIndex = 0
+				this.feedsList = []
+				this.$refs.waterfall.clear()
+				this.getFeedsList()
+			})
+			
+			// 用户点赞一条动态后触发数据更新
+			uni.$on('indexFeedLoveChange', item => {
+				this.$refs.waterfall.modify(item.id, "like_count", item.like_count);
+				this.$refs.waterfall.modify(item.id, "has_like", item.has_like);
+			})
+			
+			// 个人中心删除一条动态后，触发更新首页数据
+			uni.$on("indexFeedRemove", fid =>{
+				this.$refs.waterfall.remove(fid);
 			})
 			
 			//在这里初始化请求相关数据
@@ -209,7 +292,6 @@
 				this.getNewsList()
 				this.swiperSliderHeight = this.swiperSliderNewsHeight
 			}
-			console.log(this.swiperSliderHeight)
 		},
 		
 		methods: {
@@ -290,7 +372,7 @@
 </script>
 
 <style lang="scss" scoped>
-	#sns {
+	#index {
 			background-color: #F9F9F9;
 		}
 	.tabs-box {
@@ -426,7 +508,8 @@
 	
 	// 此刻 栏目样式\
 	.swiper-box{
-		margin-top: 60upx;
+		background-color: #f1f1f1;
+		padding: 60upx 0 40upx;
 	}
 	.sns-now {
 		// 动态相关瀑布流样式

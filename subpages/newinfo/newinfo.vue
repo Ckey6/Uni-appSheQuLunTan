@@ -36,11 +36,11 @@
 		<!-- 作者信息 -->
 		<view class="info-header">
 			<text class="send">{{ newInfo.created_at | timeFormate }}发布 </text>
-			<text>{{ newInfo.views_count }}阅读</text>
+			<text>{{ newInfo.hits }}阅读</text>
 		</view>
 
 		<view class="line" />
-		<comment :oneInfo='newInfo' type="news"/>
+		<comment :info="newInfo" type="new"/>
 	</view>
 </template>
 
@@ -108,19 +108,19 @@
 				很多同学，你若是对正则这样的知识都还不熟悉的话！请你一定不要强行要自己学着什么源码啊什么的
 			*/
 		   let content = res.content.replace(/@!\[.*\]\((\d*)\)/g, "<img src='"+ this.BaseFileURL +"$1' />")
-		   console.log(content)
-		   
+		   // console.log(content)
 
 			this.newInfo = {
-				id: res.id,
+				...res,
+				// id: res.id,
 				cutTitle : res.title.length > 11 ? res.title.substring(0, 11) + "..." : res.title,
-				title: res.title,
+				// title: res.title,
 				cover: this.BaseFileURL + res.image.id,
-				userId: res.user_id,
-				author: res.author,
+				// userId: res.user_id,
+				// author: res.author,
 				content,
-				created_at: res.created_at,
-				views_count: res.hits
+				// created_at: res.created_at,
+				// views_count: res.hits
 			}
 			this.getRequestOK = true;
 		},
