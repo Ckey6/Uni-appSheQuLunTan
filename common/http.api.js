@@ -71,6 +71,24 @@ const install = (Vue, vm) => {
 	//获取当前登录用户相关通知消息
 	api.getUserMsg = () => vm.$u.get('/user/counts')
 	
+	//删除指定ID 
+	api.deleteFeed = params => vm.$u.delete('/feeds/' + params.id + '/currency')
+	//点赞
+	api.likeThisFeed = params => vm.$u.post('/feeds/' + params.id + '/like')
+	//取消点赞
+	api.unlikeThisFeed = params => vm.$u.delete('/feeds/' + params.id + '/unlike')
+	//发布一条动态
+	api.postOneFeed = params => vm.$u.post('/feeds',params)
+	//评论一条动态
+	api.commentOneFeed = params => vm.$u.post('/feeds/'+ params.id + '/comments',{body:params.body})
+	
+	//点赞资讯
+	api.likeThisNew = params => vm.$u.post('/news/' + params.id + '/likes')
+	//取消点赞
+	api.unlikeThisNew = params => vm.$u.delete('/news/' + params.id + '/likes')
+	//评论一条资讯
+	api.commentOneInfo = params => vm.$u.post('/news/' + params.id + '/comments',{body:params.body})
+	
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
 	vm.$u.api = api
 }

@@ -20,6 +20,10 @@ Vue.prototype.BaseFileURL = 'http://47.115.83.135/api/v2/files/'
 import store from '@/store/index.js'
 Vue.prototype.$store = store
 
+//引入minxin
+import feedMixin from '@/mixins/todoFeed.js'
+Vue.prototype.$feedMixin = feedMixin
+
 Vue.config.productionTip = false
 
 App.mpType = 'app'

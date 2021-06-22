@@ -29,7 +29,7 @@
             "path" : "pages/mine/mine",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "个人中心",
+                "navigationStyle": "custom",
                 "enablePullDownRefresh": true
             }
             
@@ -60,6 +60,15 @@
                     "style" :                                                                                    
                 {
                     "navigationStyle": "custom",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
+                ,{
+                    "path" : "setting/setting",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
                     "enablePullDownRefresh": false
                 }
                 

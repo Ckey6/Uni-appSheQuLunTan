@@ -195,22 +195,24 @@
 		},
 		async created(){
 			//每次这个组件展开，就去判断一下当前token是否可以获取新的token，如果可以获取，就关闭登录状态
-			let res =await this.$u.api.getUserMsg()
+			let res = await this.$u.api.getUserMsg()
+			console.log(res)
 			//点赞消息数量
-			if(res.statesCode === 200){
+			if(res.statusCode === 200){
 				this.show = false
 				return
 			}else{
 				this.show = true
 			}
 			wx.getSetting({
-				success:(res) =>{
-					console.log(res.authSetting)
-					if(res.authSetting['scope.userInfo']){
+				success: res =>{
+					// console.log(res.authSetting)
+					if(res.authSetting["scope.userInfo"]){
 						uni.getUserProfile({
 					        desc:'微信登录',
-							success: res =>{
+							success: res => {
 								console.log(res)
+								console.log(111)
 								//如果用户授权了，我们就直接调用一些关键信息，避免用户过多操作
 								this.form.avatar = res.userInfo.avatarUrl
 								this.form.name = res.userInfo.nickName
@@ -226,9 +228,9 @@
 			})
 		},
 		methods:{
-			...mapActions(['userLoginAction','userLogouAction']),
+			...mapActions(['userLoginAction','userLogoutAction']),
 			//点击关闭登录注册组件
-			opneLogin(){
+			openLogin(){
 				this.show = true
 			},
 			closeLogin(){
@@ -239,15 +241,17 @@
 				uni.getUserProfile({
 					desc:'微信登录',
 					success: res =>{
-						// console.log(res)
+						// console.log(222)
+						console.log(res)
 						//如果用户授权了，我们就直接调用一些关键信息，避免用户过多操作
 						this.form.avatar = res.userInfo.avatarUrl
 						this.form.name = res.userInfo.nickName
 						this.form.login = res.userInfo.nickName
 						this.getUserInfoTag = false
+						
 					},
 					fail:()=>{
-						console.log('用户未授权')
+						// console.log('用户未授权')
 					}
 				})
 			},
@@ -384,8 +388,12 @@
 				if(this.loginType === 'login'){
 					name = this.form.login
 				}
+				
+				uni.$emit('meUserLogin')
+				uni.$emit('indexUserLogin')
+				
 				//Vuex保存登录状态
-				this.userLoginActions({
+				this.userLoginAction({
 					name:this.form.login,
 					avatar:this.form.avatar,
 					like:res.data.user.liked,
@@ -396,6 +404,7 @@
 		}
 	}
 </script>
+
 
 <style lang="scss" scoped>
 	.login{

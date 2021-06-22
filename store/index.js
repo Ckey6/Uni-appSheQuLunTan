@@ -5,7 +5,7 @@ const store = new Vuex.Store({
 	//这个代表全局可以访问数据对象，就像是咱们在组件中声明的data属性
 	state:{
 		loginState:!!uni.getStorageSync('loginState') ? true : false,
-		userInfo:!!uni.getStorageSync('loginState') ? JSON.parse(uni.getStorageSync('userInfo')) : {
+		userInfo:!!uni.getStorageSync('userInfo') ? JSON.parse(uni.getStorageSync('userInfo')) : {
 			name:'未知用户',
 			avatar:'/static/nopic.png',
 			like:0,
@@ -22,7 +22,7 @@ const store = new Vuex.Store({
 			state.loginState = true
 			state.userInfo = userInfo
 			uni.setStorageSync('loginState','ok')
-			uni.setStorageSync('loginInfo',JSON.stringify(userInfo))
+			uni.setStorageSync('userInfo',JSON.stringify(userInfo))
 		},
 		userLogout(state){
 			state.loginState = false
@@ -32,9 +32,9 @@ const store = new Vuex.Store({
 				like:0,
 				commented:0
 			}
-			uni.setStorageSync('userInfo')
-			uni.setStorageSync('loginState')
-			uni.setStorageSync('token')
+			uni.clearStorageSync('userInfo')
+			uni.clearStorageSync('loginState')
+			uni.clearStorageSync('token')
 		}
 	},
 	//通过提交mutation内部的方法。异步更新state的状态，官方推荐都使用这种方法

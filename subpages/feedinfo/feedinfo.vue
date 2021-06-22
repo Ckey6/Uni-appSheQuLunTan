@@ -16,7 +16,7 @@
 		</view>
 		<view class="line" />
 		<!-- 调用评论组件 -->
-		<comment :oneInfo='feedInfo' type="feed"/>
+		<comment :info="feedInfo" type="feed"/>
 	</view>
 </template>
 
@@ -46,14 +46,15 @@
 			// console.log(res)
 			let images = res.data.images.map( item => this.BaseFileURL + item.file)
 			this.feedInfo = {
-				id: res.data.id,
+				...res.data,
+				// id: res.data.id,
 				name: res.data.user.name,
 				avatar: res.data.user.avatar ? res.data.user.avatar.url : '/static/nopic.png',
-				created_at: res.data.created_at,
-				feed_content: res.data.feed_content,
+				// created_at: res.data.created_at,
+				// feed_content: res.data.feed_content,
 				images,
-				feed_comment_count: res.data.feed_comment_count,
-				like_count: res.data.like_count
+				// feed_comment_count: res.data.feed_comment_count,
+				// like_count: res.data.like_count
 			}
 			this.getRequestOk = true
 			// console.log(this.feedInfo.created_at)
