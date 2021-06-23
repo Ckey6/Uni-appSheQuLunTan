@@ -73,6 +73,15 @@
                 }
                 
                 }
+                ,{
+                    "path" : "share/share",
+                    "style" :                                                                                    
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+                
+                }
             ]
 	}],
 	"globalStyle": {

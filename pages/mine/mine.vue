@@ -156,11 +156,11 @@
 				this.bio = ''
 				this.$refs.waterfall.clear()
 			})
-			// // 用户发布一条动态后触发数据更新
-			// uni.$on('myFeedsUpdate', ()=>{
-			// 	this.$refs.waterfall.clear()
-			// 	this.getInfos()
-			// })
+			// 用户发布一条动态后触发数据更新
+			uni.$on('myFeedsUpdate', ()=>{
+				this.$refs.waterfall.clear()
+				this.getInfos()
+			})
 			// 用户点赞一条动态后触发数据更新
 			uni.$on('myFeedLoveChange', item => {
 				this.$refs.waterfall.modify(item.id, "like_count", item.like_count);

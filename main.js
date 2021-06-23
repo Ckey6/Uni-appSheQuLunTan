@@ -7,11 +7,15 @@ Vue.use(uView)
 
 //引入公用的头部导航组件（插件市场下载）
 import uniNavBar from '@/components/uni-nav-bar/index.vue'
-Vue.component('uniNavBar',uniNavBar)
+Vue.component('uni-nav-bar',uniNavBar)
 
 //导入登录组件
 import login from "@/components/login/login.vue"
 Vue.component('login',login)
+
+//分享按钮
+import gotoShare from "@/components/gotoShare/gotoShare.vue"
+Vue.component('goto-share',gotoShare)
 
 
 Vue.prototype.BaseFileURL = 'http://47.115.83.135/api/v2/files/'

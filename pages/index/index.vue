@@ -170,6 +170,10 @@
 				</view>
 			</swiper-item>
 		</swiper>
+	    <!-- 分享组件 -->
+		<goto-share />
+		<!-- 登录组件 -->
+		<login ref='login' />
 		
 	</view>
 	
@@ -239,6 +243,14 @@
 				this.$refs.waterfall.remove(fid);
 			})
 			
+			// 发布新的动态后，触发数据更新
+			uni.$on("indexFeedsUpdate", ()=>{
+				this.currentSwiperIndex = 0
+				this.feedsList = []
+				this.$refs.waterfall.clear()
+				this.getFeedsList()
+			})
+			
 			//在这里初始化请求相关数据
 			let adverts = await this.$u.api.getAdvert()
 				this.swiperAdList = adverts.data.map(item=>{
@@ -249,11 +261,8 @@
 					}
 				})
 				
-			
 			this.getFeedsList()
 			this.getNewsList()
-			
-			
 			
 		},
 		

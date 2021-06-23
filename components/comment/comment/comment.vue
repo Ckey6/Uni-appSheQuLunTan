@@ -61,6 +61,8 @@
 				<button class="mini-btn" type="default" size="mini" @tap="closeComment" >取消</button>
 			</view>
 		</view>
+		<!-- 登录组件 -->
+		<login ref='login' />
 		
 	</view>
 </template>

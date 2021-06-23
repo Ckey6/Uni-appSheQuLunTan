@@ -89,6 +89,27 @@ const install = (Vue, vm) => {
 	//评论一条资讯
 	api.commentOneInfo = params => vm.$u.post('/news/' + params.id + '/comments',{body:params.body})
 	
+	// 文件上传操作
+	api.uploadFile = async file =>{
+		let rfile = file
+		// #ifdef MP-WEIXIN
+		rfile = uni.getFileSystemManager().readFileSync(file.path)
+		// #endif
+		
+		// 将文件写入后台系统系统
+		let ufile = await uni.uploadFile({
+			url: vm.$u.http.config.baseUrl + '/files',
+			header: {
+				Authorization: "Bearer " + uni.getStorageSync("token"),
+			},
+			name: 'file',
+			file: rfile,
+			filePath: file.path
+		});
+		console.log(JSON.parse(ufile[1].data))
+		return JSON.parse(ufile[1].data)
+	}
+	
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
 	vm.$u.api = api
 }
