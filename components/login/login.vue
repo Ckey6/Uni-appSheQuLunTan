@@ -9,10 +9,14 @@
 			<view class="p-name" v-if="getUserInfoTag">
 				前端交流学习中心欢迎您
 			</view>
+			
+			<!-- #ifdef MP-WEIXIN -->
 			<button class="submit-btn"  @click="getWechatUserInfo" v-if="getUserInfoTag">
 				<image class="wechat-img" src="/static/wechat.png"></image>
 				<text>一键获取微信信息</text>
 			</button>
+			<!-- #endif -->
+			
 			<u-form :model="form" ref="uForm" v-show="!getUserInfoTag">
 				<u-form-item label="账号" prop="login" label-width="150" requird v-if="loginType === 'login'">
 					<u-input v-model="form.login" placeholder="请输入手机号/邮箱/昵称"/>
@@ -204,6 +208,7 @@
 			}else{
 				this.show = true
 			}
+			// #ifdef MP-WEIXIN
 			wx.getSetting({
 				success: res =>{
 					// console.log(res.authSetting)
@@ -226,6 +231,11 @@
 					}
 				}
 			})
+			// #endif
+			
+			// #ifndef MP-WEIXIN
+			this.getUserInfoTag = false
+			// #endif
 		},
 		methods:{
 			...mapActions(['userLoginAction','userLogoutAction']),

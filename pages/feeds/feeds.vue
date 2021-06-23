@@ -8,6 +8,8 @@
 					</navigator>
 				</view>
 			</view>
+			<!-- 分享组件 -->
+			<goto-share />
 		</view>
 </template>
 
@@ -21,6 +23,12 @@
 		},
 		onLoad(){
 			this.getFeeds()
+			
+			//用户发布动态后触发数据更新
+			uni.$on('feedsUpdate',()=>{
+				this.feedsList = []
+				this.getFeeds()
+			})
 		},
 		methods: {
 			async getFeeds(){
