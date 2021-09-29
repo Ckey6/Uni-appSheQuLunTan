@@ -4,10 +4,12 @@ const install = (Vue, vm) => {
 	Vue.prototype.$u.http.setConfig({
 		//如果是H5 使用了代理服务器,就不能再使用这个接口 baseUrl: 'http://47.115.83.135/api/v2'
 		// #ifdef H5
-		baseUrl: '/api',
+			baseUrl: '/api',
 		// #endif
+		
 		// #ifndef H5
-		baseUrl: 'http://ts.lagou.uieee.com/api/v2',
+			//baseUrl: 'http://ts.lagou.uieee.com/api/v2', //拉钩服务器
+			 baseUrl: 'http://47.115.83.135/api/v2',
 		// #endif
 		
 		//baseUrl: 'http://47.115.83.135/api/v2', // 请求的本域名

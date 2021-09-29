@@ -48,60 +48,10 @@
 		<!-- 内容轮播导航实现 -->
 		<swiper  class="swiper-box" :style="'height:' + swiperSliderHeight" :current="currentSwiperIndex" @animationfinish="swiperSlider">
 			<!-- 推荐动态实现 -->
-			<!-- <swiper-item class="swiper-item">
-							<view class="page-item sns-now">
-								<view class="feeds-box">
-									<u-waterfall-sns v-model="feedsList" ref="waterfall">
-										<template v-slot:left="{leftList}">
-											<view class="feed-one" v-for="(item, index) in leftList" :key="index">
-												<navigator open-type="navigate" :url=" '/subpages/feedinfo/feedinfo?id=' + item.id">
-													<image class="feed-img" :src="item.cover" mode="widthFix" :lazy-load="true" />
-													<view class="u-line-2 feed-title" v-if="!!item.feed_content">{{ item.feed_content }}</view>
-													<view class="feed-info">
-														<view class="iview">
-															<image class="avatar" :src=" item.avatar" />
-															<text class="name u-line-1">{{ item.name }}</text>
-														</view>
-														<view class="iview">
-															<view class="ilike" @tap.stop="clickLove(item)">
-																<image v-if="item.has_like" src="@/static/lover.png" class="micon" />
-																<image v-else src="@/static/love.png" class="micon" />
-																<text class="love-count" v-if="item.like_count>0">{{ item.like_count }}</text>
-															</view>
-														</view>
-													</view>
-												</navigator>
-											</view>
-										</template>
-										<template v-slot:right="{rightList}">
-											<view class="feed-one" v-for="(item, index) in rightList" :key="index">
-												<navigator open-type="navigate" :url=" '/subpages/feedinfo/feedinfo?id=' + item.id">
-													<image class="feed-img" :src="item.cover" mode="widthFix" :lazy-load="true" />
-													<view class="u-line-2 feed-title" v-if="!!item.feed_content">{{ item.feed_content }}</view>
-													<view class="feed-info">
-														<view class="iview">
-															<image class="avatar" :src=" item.avatar" />
-															<text class="name u-line-1">{{ item.name }}</text>
-														</view>
-														<view class="iview">
-															<view class="ilike" @tap.stop="clickLove(item)">
-																<image v-if="item.has_like" src="@/static/lover.png" class="micon" />
-																<image v-else src="@/static/love.png" class="micon" />
-																<text class="love-count" v-if="item.like_count>0">{{ item.like_count }}</text>
-															</view>
-														</view>
-													</view>
-												</navigator>
-											</view>
-										</template>
-									</u-waterfall-sns>
-								</view>
-							</view>
-						</swiper-item> -->
 			<swiper-item class="swiper-item">
 				<view class="page-item sns-now">
 					<view class="feeds-box">
-						<u-waterfall-sns v-model="feedsList" ref="waterfall">
+						<waterfall-sns v-model="feedsList" ref="waterfall">
 							<template v-slot:left="{leftList}">
 								<view class="feed-one" v-for="(item, index) in leftList" :key="index">
 									<navigator :url=" '/subpages/feedinfo/feedinfo?id=' + item.id ">
@@ -144,7 +94,7 @@
 									</navigator>
 								</view>
 							</template>
-						</u-waterfall-sns>
+						</waterfall-sns>
 					</view>
 				</view>
 			</swiper-item>
@@ -180,15 +130,20 @@
 </template>
 
 <script>
+	
 	import {
 		mapState,
 		mapActions
 	} from 'vuex'
-	import feedMixin from '@/mixins/todoFeed.js'	
+	import feedMixin from '@/mixins/todoFeed.js'
+	//引入个性化瀑布流组件
+	import waterfallSns from '@/components/waterfall-sns/index.vue'
 	export default {
 		mixins: [feedMixin],
 		data() {
 			return {
+				//登陆组件显示状态
+				indexLoginShow:false,
 				//navbar显示状态初始值
 				navBarShowTag:false,
 				//顶部轮播图列表 
@@ -209,22 +164,21 @@
 				oldNewsScrollTop:0
 			}
 		},
+		components:{
+			waterfallSns
+		},
 		computed: {
 			...mapState(['loginState', 'userInfo'])
 		},
 		async onLoad() {
-			//在这里注册一个uniApp的顶层事件，用来作为数据通信
-			uni.$on("swiperHeightChange",height =>{
-				this.swiperSliderFeedsHeight = parseInt(height) + 100 +'px';
-				this.swiperSliderHeight = this.swiperSliderFeedsHeight
-			})
-			
+			//个人页面登录后触发首页更新
 			uni.$on('indexUserLogin', ()=>{
 				this.currentSwiperIndex = 0
 				this.feedsList = []
 				this.$refs.waterfall.clear()
 				this.getFeedsList()
 			})
+			//个人页面退出后触发首页更新
 			uni.$on('indexUserLogout', ()=>{
 				this.currentSwiperIndex = 0
 				this.feedsList = []
@@ -260,7 +214,6 @@
 						image:item.data.image,
 					}
 				})
-				
 			this.getFeedsList()
 			this.getNewsList()
 			
@@ -281,8 +234,7 @@
 		},
 		
 		onReachBottom(){
-			console.log("下拉到底了");
-			//请求新的数据
+			//下拉到底请求新的数据
 			if(this.currentSwiperIndex === 0){
 				this.getFeedsList()
 				this.swiperSliderHeight = this.swiperSliderFeedsHeight
@@ -322,6 +274,12 @@
 					}
 				})
 				this.feedsList = [...this.feedsList,...feedList]
+				// 在这里注册一个 uniAPP 的顶层事件，用来作为数据通信
+				uni.$once("swiperHeightChange", height => {
+					// console.log('计算出来的高度为:'+ height)
+					this.swiperSliderFeedsHeight = height
+					this.swiperSliderHeight = height
+				})
 			},
 			
 			//请求资讯列表数据
