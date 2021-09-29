@@ -68,7 +68,7 @@
 		data(){
 			return{
 				//当前组件是否显示
-				show:true,
+				show:false,
 				//是否需要获取微信的相关信息
 				getUserInfoTag:true,
 				//登录、手机注册、邮箱注册的分类
@@ -538,7 +538,8 @@
 	}
 	.btns{
 		margin-top: 20upx;
-		align-items: center;
+		// align-items: center;
+		text-align: center;
 		.ubtn{
 			display: inline-block;
 			margin: 0 20upx;
